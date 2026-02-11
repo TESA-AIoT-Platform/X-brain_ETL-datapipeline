@@ -1,13 +1,23 @@
-FROM python:3.8-slim as builder
-COPY prodRequirements.txt /requirements.txt
-RUN pip install --user -r /requirements.txt
+FROM python:3.11-slim AS builder
 
-FROM python:3.8-slim as app
-COPY --from=builder /root/.local /root/.local
-COPY ./src ./app
-WORKDIR /app/settings
-RUN rm dev.ini 
-RUN mv prod.ini dev.ini 
+WORKDIR /build
+
+COPY prodRequirements.txt .
+
+RUN pip install --no-cache-dir -r prodRequirements.txt
+
+
+FROM python:3.11-slim AS app
+
+ENV PYTHONUNBUFFERED=1
+
 WORKDIR /app
-ENV PATH=/root/.local/bin:$PATH
-CMD [ "python3", "./main.py" ]
+
+COPY --from=builder /usr/local /usr/local
+COPY ./src ./app
+
+# create non-root user
+RUN useradd -ms /bin/bash appuser
+USER appuser
+
+CMD ["python", "./app/main.py"]
