@@ -13,31 +13,53 @@ services:
     networks:
       - airflow_network
 
-  airflow-webserver:
-    image: apache/airflow:2.8.0
-    container_name: airflow-webserver
-    environment:
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__EXECUTOR: Local
+  airflow-init:
+    image: apache/airflow:3.1.5
+    container_name: airflow-init
     depends_on:
       - postgres
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    command: >
+      bash -c "
+      airflow db migrate &&
+      airflow users create
+        --username admin
+        --password admin
+        --firstname admin
+        --lastname user
+        --role Admin
+        --email admin@example.com
+      "
+
+  airflow-webserver:
+    image: apache/airflow:3.1.5
+    container_name: airflow-webserver
+    depends_on:
+      - postgres
+      - airflow-init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
     ports:
       - "8080:8080"
+    command: webserver
     networks:
       - airflow_network
-    entrypoint: ["airflow", "webserver"]
 
   airflow-scheduler:
-    image: apache/airflow:2.8.0
+    image: apache/airflow:3.1.5
     container_name: airflow-scheduler
-    environment:
-      AIRFLOW__CORE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
-      AIRFLOW__CORE__EXECUTOR: Local
     depends_on:
       - postgres
+      - airflow-init
+    environment:
+      AIRFLOW__CORE__EXECUTOR: LocalExecutor
+      AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+    command: scheduler
     networks:
       - airflow_network
-    entrypoint: ["airflow", "scheduler"]
 
   adminer:
     image: adminer
