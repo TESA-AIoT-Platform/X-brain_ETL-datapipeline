@@ -3,7 +3,7 @@ import pandas as pd
 from airflow import DAG
 from airflow.operators.python_operator import PythonOperator
 from airflow.hooks.postgres_hook import PostgresHook
-from datetime import datetime
+from datetime import date, datetime, timedelta
 import pendulum
 from bs4 import BeautifulSoup
 
@@ -101,7 +101,7 @@ def upload_data_to_postgres(**kwargs):
 
 # กำหนดค่า default arguments สำหรับ DAG
 default_args = {
-    'owner': 'airflow',
+    'owner': 'zg',
     'start_date': datetime.strptime(datetime.now().strftime('%Y-%m-%d 00:00'),'%Y-%m-%d 00:00').replace(tzinfo=local_tz),
     'retries': 1
 }

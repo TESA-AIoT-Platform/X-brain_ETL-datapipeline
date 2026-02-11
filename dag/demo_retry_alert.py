@@ -1,5 +1,8 @@
 import logging
-from datetime import timedelta
+from datetime import date, datetime, timedelta
+import pendulum
+
+local_tz = pendulum.timezone("Asia/Bangkok")
 
 from airflow import DAG
 from airflow.operators.python import PythonOperator
@@ -21,9 +24,9 @@ def _get_data_from_api():
 
 
 default_args = {
-    "owner": "bdh",
-    "email": ["la.nattapak@zanegrowth.com"],
-    "start_date": timezone.datetime(2022, 11, 15),
+    "owner": "zg",
+    "email": ["xxx@gmail.com"],
+    "start_date": datetime.strptime(datetime.now().strftime('%Y-%m-%d 00:00'),'%Y-%m-%d 00:00').replace(tzinfo=local_tz),
     "retries": 3,
     "retry_delay": timedelta(seconds=5),
     "email_on_failure": True,

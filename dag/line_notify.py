@@ -9,8 +9,8 @@ import pendulum
 local_tz = pendulum.timezone("Asia/Bangkok")
 
 ## ดึงข้อมูลจาก API
-def get_covid19_report_today():
-    url = 'https://covid19.th-stat.com/api/open/today'
+def get_pm25_report_today():
+    url = 'https://aqicn.org/city/bangkok/th/'
     response = requests.get(url)
     data = response.json()
 
@@ -32,7 +32,7 @@ def send_line_notify():
     with open('data.json') as f:
         data = json.load(f)
 
-    msg = "Covid-19 report today \n"
+    msg = "PM-2.5 report today \n"
     for (k,v) in data.items():
         msg += str(k) + ":" + str(v) + "\n"
 
@@ -41,7 +41,7 @@ def send_line_notify():
 
 ## สร้าง DAG Object โดยกำหนดเวลาในการทำงานทุกๆ 8 โมงของทุกวัน
 default_args = {
-    'owner': 'airflow',
+    'owner': 'zg',
     'start_date': datetime.strptime(datetime.now().strftime('%Y-%m-%d 00:00'),'%Y-%m-%d 00:00').replace(tzinfo=local_tz),
 }
 with DAG('line-notify',
@@ -51,8 +51,8 @@ with DAG('line-notify',
          catchup=False) as dag:
 
     t1 = PythonOperator(
-        task_id='get_covid19_report_today',
-        python_callable=get_covid19_report_today
+        task_id='get_pm25_report_today',
+        python_callable=get_pm25_report_today
     )
 
     t2 = PythonOperator(
