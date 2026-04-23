@@ -13,6 +13,17 @@ services:
     networks:
       - airflow_network
 
+  redis:
+    image: redis:7.0-alpine
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - airflow_network
+
   airflow-init:
     image: apache/airflow:3.1.5
     container_name: airflow-init
