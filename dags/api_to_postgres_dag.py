@@ -2,7 +2,7 @@ import requests
 import pandas as pd
 from airflow import DAG
 from airflow.operators.python import PythonOperator
-from airflow.hooks.postgres_hook import PostgresHook
+from airflow.providers.postgres.hooks.postgres import PostgresHook
 from datetime import date, datetime, timedelta
 import pendulum
 from bs4 import BeautifulSoup
@@ -110,29 +110,26 @@ default_args = {
 with DAG(
     dag_id='api_to_postgres_dag',
     default_args=default_args,
-    schedule_interval=None,  # กำหนดว่า DAG นี้ไม่ต้องรันอัตโนมัติ ในกรณีที่อยากให้รันอัตโนมัติทุกๆ 1 ชม ให้ใส่เป็น '@hourly'
+    schedule=None,  # กำหนดว่า DAG นี้ไม่ต้องรันอัตโนมัติ ในกรณีที่อยากให้รันอัตโนมัติทุกๆ 1 ชม ให้ใส่เป็น '@hourly'
     catchup=False,
 ) as dag:
 
     # Task สำหรับดึงข้อมูลจาก API
     fetch_data = PythonOperator(
         task_id='fetch_data',
-        python_callable=fetch_data_from_api,
-        provide_context=True,
+        python_callable=fetch_data_from_api
     )
 
     # Task สำหรับ Cleansing ข้อมูล
     clean_data = PythonOperator(
         task_id='clean_data',
-        python_callable=clean_data,
-        provide_context=True,
+        python_callable=clean_data
     )
 
     # Task สำหรับอัพโหลดข้อมูลเข้า PostgreSQL
     upload_data = PythonOperator(
         task_id='upload_data',
-        python_callable=upload_data_to_postgres,
-        provide_context=True,
+        python_callable=upload_data_to_postgres
     )
 
     # กำหนดลำดับการรัน Task

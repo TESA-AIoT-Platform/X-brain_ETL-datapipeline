@@ -192,7 +192,7 @@ default_args = {
 with DAG(
     'collects_tesaiot',
     default_args=default_args,
-    schedule_interval=timedelta(minutes=3),
+    schedule=timedelta(minutes=3),
     catchup=False,
     tags=['mongo','postgres','tesaiot']
 ) as dag:

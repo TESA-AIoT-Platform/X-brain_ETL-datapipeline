@@ -45,7 +45,7 @@ default_args = {
     'start_date': datetime.strptime(datetime.now().strftime('%Y-%m-%d 00:00'),'%Y-%m-%d 00:00').replace(tzinfo=local_tz),
 }
 with DAG('line-notify',
-         schedule_interval='0 8 * * *',
+         schedule='0 8 * * *',
          default_args=default_args,
          description='A simple data pipeline for line-notify',
          catchup=False) as dag:

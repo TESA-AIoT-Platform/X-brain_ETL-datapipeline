@@ -30,14 +30,14 @@ default_args = {
     "retries": 3,
     "retry_delay": timedelta(seconds=5),
     "email_on_failure": True,
-    "email_on_retry": True
-    # "on_retry_callback": retry_callback,
-    # "on_failure_callback": failure_callback,
+    "email_on_retry": True,
+    "on_retry_callback": retry_callback,
+    "on_failure_callback": failure_callback
 }
 with DAG(
     "demo_retry_and_alert",
     default_args=default_args,
-    schedule_interval=None,
+    schedule='@daily',
 ) as dag:
 
     get_data_from_api = PythonOperator(
