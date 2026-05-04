@@ -12,14 +12,18 @@ local_tz = pendulum.timezone("Asia/Bangkok")
 # ฟังก์ชันสำหรับดึงข้อมูลจาก API
 def fetch_data_from_api(**kwargs):
     url = 'https://www.worldometers.info/coronavirus/'
-    response = requests.get(url)
+    headers = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+    }
+    response = requests.get(url, headers=headers)
 
     # ตรวจสอบว่า request สำเร็จหรือไม่
     if response.status_code != 200:
         raise Exception(f"Failed to fetch data. Status code: {response.status_code}")
 
     # Parse ข้อมูล HTML
-    soup = BeautifulSoup(response.text, 'lxml')
+    # soup = BeautifulSoup(response.text, 'lxml')
+    soup = BeautifulSoup(response.text, 'html.parser')
 
     # ดึงข้อมูลจากตารางที่มี id = 'main_table_countries_today'
     table_data = soup.find('table', id='main_table_countries_today')

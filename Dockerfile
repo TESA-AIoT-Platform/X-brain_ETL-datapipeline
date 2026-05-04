@@ -1,4 +1,4 @@
-FROM apache/airflow:3.1.5
+FROM apache/airflow:3.1.8
 
 # มั่นใจว่าอยู่ใน Folder หลักของ Airflow
 WORKDIR /opt/airflow

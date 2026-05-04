@@ -1,5 +1,5 @@
 x-airflow-common: &airflow-common
-  image: ${AIRFLOW_IMAGE_NAME:-apache/custom_image_airflow:3.1.5}
+  image: ${AIRFLOW_IMAGE_NAME:-apache/custom_image_airflow:3.1.8}
   environment: &airflow-common-env
     AIRFLOW__CORE__EXECUTOR: CeleryExecutor
     AIRFLOW__CORE__AUTH_MANAGER: airflow.providers.fab.auth_manager.fab_auth_manager.FabAuthManager
@@ -8,7 +8,7 @@ x-airflow-common: &airflow-common
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
     AIRFLOW__CORE__LOAD_EXAMPLES: "false"
-    # Airflow ตั้งแต่เวอร์ชัน 2.7.0 ขึ้นไป (รวมถึง 3.1.5 ที่คุณใช้อยู่) ได้ทำการปิดฟีเจอร์นี้ไว้เป็นค่าเริ่มต้นเพื่อความปลอดภัย
+    # Airflow ตั้งแต่เวอร์ชัน 2.7.0 ขึ้นไป ได้ทำการปิดฟีเจอร์นี้ไว้เป็นค่าเริ่มต้นเพื่อความปลอดภัย
     # เนื่องจากฟีเจอร์นี้อาจถูกใช้เป็นช่องทางในการโจมตีระบบ (Remote Code Execution) 
     # หากมีผู้ไม่หวังดีสามารถเข้าถึงหน้าจัดการ Connection ได้
     AIRFLOW__CORE__TEST_CONNECTION: "Enabled"
