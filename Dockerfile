@@ -1,23 +1,11 @@
-FROM python:3.11-slim AS builder
+FROM apache/airflow:3.1.5
 
-WORKDIR /build
+# มั่นใจว่าอยู่ใน Folder หลักของ Airflow
+WORKDIR /opt/airflow
 
-COPY prodRequirements.txt .
+# คัดลอกเฉพาะไฟล์ที่จำเป็น
+COPY requirements.txt . 
 
-RUN pip install --no-cache-dir -r prodRequirements.txt
-
-
-FROM python:3.11-slim AS app
-
-ENV PYTHONUNBUFFERED=1
-
-WORKDIR /app
-
-COPY --from=builder /usr/local /usr/local
-COPY ./src ./app
-
-# create non-root user
-RUN useradd -ms /bin/bash appuser
-USER appuser
-
-CMD ["python", "./app/main.py"]
+# ติดตั้ง Library ในฐานะ User airflow
+USER airflow
+RUN pip install --no-cache-dir -r requirements.txt
