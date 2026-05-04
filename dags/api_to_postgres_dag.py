@@ -1,7 +1,7 @@
 import requests
 import pandas as pd
 from airflow import DAG
-from airflow.operators.python_operator import PythonOperator
+from airflow.operators.python import PythonOperator
 from airflow.hooks.postgres_hook import PostgresHook
 from datetime import date, datetime, timedelta
 import pendulum
